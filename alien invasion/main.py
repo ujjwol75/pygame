@@ -19,7 +19,7 @@ icon = pygame.image.load("icon.png")
 pygame.display.set_icon(icon)
 
 score = 0
-lives = 0
+lives = 3
 
 # player
 playerimg = pygame.image.load("space-invaders.png")
@@ -50,7 +50,7 @@ for i in range(num_of_enemies):
 bulletimg = pygame.image.load("pixel_laser_red.png")
 bulletimg = pygame.transform.scale(bulletimg, (60, 60))
 bulletX = 0
-bulletY = 510
+bulletY = 600
 bulletX_change = 0
 bulletY_change = 0.7
 bullet_state = "ready"
@@ -74,7 +74,7 @@ def firebullet(x, y):
 
 def iscollision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt(math.pow(enemyX-bulletX,2) + (math.pow(enemyY-bulletY, 2)))
-    if distance < 40:
+    if distance < 24:
         return True
     else:
         return False
@@ -88,14 +88,18 @@ def scoreboard():
 
 # def testing_gameover(enemyX, enemyY, playerX, playerY):
 #     gameover = math.sqrt(math.pow(enemyX-playerX,2) + (math.pow(enemyY-playerY,2)))
-#     if gameover:
+#     if gameover < 5:
 #         return True
 #     else:
 #         False
 
-# def gameOver_score():
-#     game = font.render('Lives : ' + str(score), True, (255, 255, 255))
-#     screen.blit(game, (750, 5))
+def gameOver_score():
+    game = font.render('Lives : ' + str(lives), True, (255, 255, 255))
+    screen.blit(game, (700, 5))
+
+def gameovermessage():
+    overText = font.render("Game Over", True, (255, 255, 255))
+    screen.blit(overText, (350,250))
 
 running = True
 while running:
@@ -132,9 +136,19 @@ while running:
     for i in range(num_of_enemies):
         # gameover_text = testing_gameover(enemyX[i], enemyY[i], playerX, playerY)
         # if gameover_text:
-        #     lives += 1
-        #     if lives == 3:
+        #     lives -= 1
+        #     if lives == 0:
+        #         gameovermessage()
         #         running = False
+        if enemyY[i] >= 510:
+            if playerY == enemyY[i]:
+                lives -= 1
+                if lives == 0:
+                    gameovermessage()
+                    running = False
+
+
+        
         enemyX[i] += enemyX_change[i]
         # enemy movement
         if enemyX[i] <= 0:
@@ -167,7 +181,7 @@ while running:
         firebullet(bulletX, bulletY)
         bulletY -= bulletY_change
     
-    
+    gameOver_score()
     scoreboard()
     player(playerX, playerY)
     enemy(enemyX[i], enemyY[i], i)
